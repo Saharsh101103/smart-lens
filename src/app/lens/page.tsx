@@ -6,6 +6,20 @@ import Webcam from "react-webcam";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import Link from "next/link";
+import Image from "next/image";
+
+interface ObjectResult {
+  Obj: string;
+}
+
+interface SearchResult {
+  link: string;
+}
+
+interface APIResponse {
+  Objects: ObjectResult[];
+  "Search-Results": SearchResult[];
+}
 
 const exampleResults = [
   {
@@ -36,8 +50,8 @@ const exampleResults = [
 
 const Lens: React.FC = () => {
   const [cameraVisible, setCameraVisible] = useState(false);
+  const [results, setResults] = useState<APIResponse[]>([]);
   const [image, setImage] = useState<string | undefined>(undefined);
-  const [results, setResults] = useState<typeof exampleResults>([]);
   const [loading, setLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [activeTab, setActiveTab] = useState<"objects" | "links">("objects");
@@ -56,7 +70,7 @@ const Lens: React.FC = () => {
     setCameraVisible(true);
   };
 
-  const handleViewResults = async () => {
+  const handleViewResults = async () => { 
     if (!image) return;
 
     setLoading(true);
@@ -75,8 +89,11 @@ const Lens: React.FC = () => {
         throw new Error("Network response was not ok");
       }
 
-      const data = await response.json();
-      setResults(data.results);
+      const data = (await response.json()) as { results: APIResponse[] };
+
+      if (typeof data.results === 'object' && Array.isArray(data.results)) {
+        setResults(data.results);
+      }
     } catch (error) {
       console.error("Error:", error);
       setResults(exampleResults); // Fallback example data for demonstration
@@ -97,28 +114,34 @@ const Lens: React.FC = () => {
           </div>
           <div className="mb-12 grid grid-cols-1 gap-8 text-center md:grid-cols-3">
             <div>
-              <img
-                src="https://via.placeholder.com/150"
+              <Image
+                src="/favicon.ico"
                 alt="Feature 1"
                 className="mx-auto mb-4"
+                width={150}
+                height={150}
               />
               <h3 className="text-xl font-semibold">Feature 1</h3>
               <p className="text-primary">Capture photos with ease.</p>
             </div>
             <div>
-              <img
-                src="https://via.placeholder.com/150"
+              <Image
+                src="/favicon.ico"
                 alt="Feature 2"
                 className="mx-auto mb-4"
+                width={150}
+                height={150}
               />
               <h3 className="text-xl font-semibold">Feature 2</h3>
               <p className="text-primary">Identify objects instantly.</p>
             </div>
             <div>
-              <img
-                src="https://via.placeholder.com/150"
+              <Image
+                src="/favicon.ico"
                 alt="Feature 3"
                 className="mx-auto mb-4"
+                width={150}
+                height={150}
               />
               <h3 className="text-xl font-semibold">Feature 3</h3>
               <p className="text-primary">Get accurate results quickly.</p>
@@ -147,12 +170,16 @@ const Lens: React.FC = () => {
       )}
 
       {image && !loading && !showResults && (
-        <div className="mt-8 flex flex-col items-center">
-          <img
+        <div className="mt-8 flex flex-col items-center md:h-[80dvh] h-auto mb-4  max-w-full">
+          <div className="md:h-[80dvh] h-auto mb-4  max-w-6xl w-screen relative">
+
+          <Image
             src={image}
             alt="Captured preview"
-            className="mb-4 max-w-full h-auto md:h-[80dvh] border-2 border-primary"
+            className=" border-2 border-primary "
+            fill
           />
+          </div>
           <div className="flex gap-4">
             <Button onClick={handleRetakePhoto}>Retake Photo</Button>
             <Button onClick={handleViewResults}>View Results</Button>
@@ -161,18 +188,22 @@ const Lens: React.FC = () => {
       )}
 
       {showResults && (
-        <div className="relative h-full w-full flex flex-col md:flex-row">
+        <div className="relative flex h-full w-full flex-col md:flex-row">
           <motion.div
             className="flex flex-col items-center justify-center bg-transparent md:w-1/2"
             initial={{ x: "0%", opacity: "0%" }}
             animate={{ x: "0%", opacity: "100%" }}
             transition={{ duration: 0.5 }}
           >
-            <img
-              src={image}
+            <div className="h-auto max-w-2xl w-screen md:h-[80dvh] relative"> 
+
+            <Image
+              src={image!}
               alt="Captured preview"
-              className="max-w-full h-auto md:h-[80dvh] border-2"
+              className="border-2"
+              fill
             />
+            </div>
           </motion.div>
 
           <motion.div
@@ -185,7 +216,10 @@ const Lens: React.FC = () => {
               Results
             </h2>
 
-            <Tabs defaultValue="account" className="mb-4 w-full flex flex-col gap-4 p-4">
+            <Tabs
+              defaultValue="account"
+              className="mb-4 flex w-full flex-col gap-4 p-4"
+            >
               <TabsList className="bg-background">
                 <TabsTrigger
                   className="bg-primary text-primary-foreground"
@@ -216,20 +250,12 @@ const Lens: React.FC = () => {
                 )}
               </TabsContent>
               <TabsContent value="password">
-                {!loading && activeTab === "links" && (
+                {!loading && activeTab === "objects" && (
                   <>
                     <p className="text-4xl text-primary">Identified Objects:</p>
-                    <ul className="my-10 list-disc pl-4">
-                      {results[0]?.["Search-Results"].map((item, index) => (
-                        <li key={index}>
-                          <Link
-                            target="_blank"
-                            href={item.link}
-                            className="text-blue-500"
-                          >
-                            {item.link}
-                          </Link>
-                        </li>
+                    <ul className="my-10 list-decimal pl-4">
+                      {results[0]?.Objects.map((item, index) => (
+                        <li key={index}>{item.Obj}</li>
                       ))}
                     </ul>
                   </>

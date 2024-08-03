@@ -5,8 +5,6 @@
  */
 import Link from "next/link"
 import { NavigationMenu, NavigationMenuList, NavigationMenuLink } from "~/components/ui/navigation-menu"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "~/components/ui/dropdown-menu"
-import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar"
 import { JSX, SVGProps } from "react"
 import { ModeToggle } from "./DarkMode"
 
