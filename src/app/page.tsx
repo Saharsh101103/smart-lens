@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import FeatureCard from '../components/FeatureCard';
+import Link from 'next/link';
 
 type Post = {
   id: number;
@@ -29,22 +30,22 @@ const Home: React.FC = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="bg-gray-100 min-h-screen">
+      <main className="min-h-screen">
         {/* Hero Section */}
-        <section className="flex flex-col items-center justify-center py-20 bg-blue-500 text-white text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold">Revolutionize Your Visual Experience</h1>
+        <section className="flex flex-col items-center justify-center py-20 bg-muted   text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold dark:text-primary">Revolutionize Your Visual Experience</h1>
           <p className="mt-4 text-lg md:text-xl lg:text-2xl">
             Instantly identify objects and get useful information with our advanced image recognition technology.
           </p>
-          <a href="#features" className="mt-8 px-6 py-3 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-400 text-base md:text-lg lg:text-xl">
+          <Link href="/lens" className="mt-8 px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:opacity-85 text-base md:text-lg lg:text-xl">
             Get Started
-          </a>
+          </Link>
         </section>
 
         {/* Features Section */}
         <section id="features" className="py-20">
           <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-semibold text-center mb-8">Features</h2>
+            <h2 className="text-3xl md:text-4xl font-semibold text-center mb-8 dark:text-primary">Features</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <FeatureCard
                 title="Instant Object Recognition"
@@ -63,9 +64,9 @@ const Home: React.FC = () => {
         </section>
 
         {/* How It Works Section */}
-        <section className="py-20 bg-gray-200">
+        <section className="py-20 bg-muted ">
           <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-semibold text-center mb-8">How It Works</h2>
+            <h2 className="text-3xl md:text-4xl font-semibold text-center mb-8 dark:text-primary">How It Works</h2>
             <ol className="list-decimal pl-6 space-y-4 text-base md:text-lg">
               <li>Upload an image of the object.</li>
               <li>Receive detailed information and suggestions.</li>
@@ -77,9 +78,9 @@ const Home: React.FC = () => {
         {/* Testimonials Section */}
         <section className="py-20">
           <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-semibold text-center mb-8">What Our Users Say</h2>
+            <h2 className="text-3xl md:text-4xl font-semibold text-center mb-8 dark:text-primary">What Our Users Say</h2>
             <div className="flex flex-col items-center">
-              <blockquote className="bg-white p-6 rounded-lg shadow-lg">
+              <blockquote className="bg-primary text-primary-foreground p-6 rounded-lg shadow-lg">
                 <p className="text-lg md:text-xl">“Smart Lens has completely transformed how I interact with the world around me!”</p>
                 <footer className="mt-4">— Jane Doe</footer>
               </blockquote>
