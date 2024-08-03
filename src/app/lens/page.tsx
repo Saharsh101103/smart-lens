@@ -103,11 +103,11 @@ const Lens: React.FC = () => {
   };
 
   return (
-    <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-x-hidden dark:bg-background">
+    <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-x-hidden dark:bg-background md:px-0 px-10">
       {!cameraVisible && !image && (
         <>
-          <div className="mb-8 text-center">
-            <h1 className="mb-4 text-4xl font-bold">Smart Lens</h1>
+          <div className="md:mb-8 md:mt-0 mt-40 text-center">
+            <h1 className="m-4 md:mb-4 text-4xl font-bold">Smart Lens</h1>
             <p className="text-lg text-primary">
               Capture and identify objects effortlessly.
             </p>
@@ -170,8 +170,8 @@ const Lens: React.FC = () => {
       )}
 
       {image && !loading && !showResults && (
-        <div className="mt-8 flex flex-col items-center md:h-[80dvh] h-auto mb-4  max-w-full">
-          <div className="md:h-[80dvh] h-auto mb-4  max-w-6xl w-screen relative">
+        <div className="md:mt-8 flex flex-col items-center md:h-[80dvh] h-[30dvh] md:mb-4  max-w-6xl my-10">
+          <div className="md:h-[80dvh] h-[20dvh] mb-4  md:max-w-6xl max-w-xs w-screen relative">
 
           <Image
             src={image}
@@ -188,14 +188,14 @@ const Lens: React.FC = () => {
       )}
 
       {showResults && (
-        <div className="relative flex h-full w-full flex-col md:flex-row">
+        <div className="relative flex h-full w-full flex-col md:flex-row m-10">
           <motion.div
             className="flex flex-col items-center justify-center bg-transparent md:w-1/2"
             initial={{ x: "0%", opacity: "0%" }}
             animate={{ x: "0%", opacity: "100%" }}
             transition={{ duration: 0.5 }}
           >
-            <div className="h-auto max-w-2xl w-screen md:h-[80dvh] relative"> 
+            <div className="md:h-[80dvh] h-[20dvh] mb-4  md:max-w-4xl max-w-xs w-screen relative"> 
 
             <Image
               src={image!}
