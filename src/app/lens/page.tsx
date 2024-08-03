@@ -1,5 +1,5 @@
 "use client";
-import { CameraIcon } from "lucide-react";
+import { Camera, CameraIcon, ReceiptPoundSterling, RefreshCcwDot, RefreshCcwIcon } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Webcam from "react-webcam";
@@ -17,11 +17,11 @@ interface SearchResult {
 }
 
 interface APIResponse {
-  Objects: ObjectResult[];
-  "Search-Results": SearchResult[];
+  Objects?: ObjectResult[]; // Optional
+  SearchResults?: SearchResult[]; // Optional
 }
 
-const exampleResults = [
+const exampleResults: APIResponse[] = [
   {
     Objects: [
       { Obj: "Cat" },
@@ -31,7 +31,9 @@ const exampleResults = [
       { Obj: "Machine" },
       { Obj: "Chair" },
     ],
-    "Search-Results": [
+  },
+  {
+    SearchResults: [
       {
         link: "http://example.com/link1",
       },
@@ -55,6 +57,7 @@ const Lens: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [activeTab, setActiveTab] = useState<"objects" | "links">("objects");
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
   const webcamRef = useRef<Webcam>(null);
 
   const handleTakePhoto = () => {
@@ -70,7 +73,7 @@ const Lens: React.FC = () => {
     setCameraVisible(true);
   };
 
-  const handleViewResults = async () => { 
+  const handleViewResults = async () => {
     if (!image) return;
 
     setLoading(true);
@@ -91,7 +94,7 @@ const Lens: React.FC = () => {
 
       const data = (await response.json()) as { results: APIResponse[] };
 
-      if (typeof data.results === 'object' && Array.isArray(data.results)) {
+      if (typeof data.results === "object" && Array.isArray(data.results)) {
         setResults(data.results);
       }
     } catch (error) {
@@ -102,12 +105,18 @@ const Lens: React.FC = () => {
     }
   };
 
+  const toggleFacingMode = () => {
+    setFacingMode((prevMode) =>
+      prevMode === "user" ? "environment" : "user"
+    );
+  };
+
   return (
-    <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-x-hidden dark:bg-background md:px-0 px-10">
+    <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-x-hidden px-10 dark:bg-background md:px-0">
       {!cameraVisible && !image && (
         <>
-          <div className="md:mb-8 md:mt-0 mt-40 text-center">
-            <h1 className="m-4 md:mb-4 text-4xl font-bold">Smart Lens</h1>
+          <div className="mt-40 text-center md:mb-8 md:mt-0">
+            <h1 className="m-4 text-4xl font-bold md:mb-4">Smart Lens</h1>
             <p className="text-lg text-primary">
               Capture and identify objects effortlessly.
             </p>
@@ -161,24 +170,26 @@ const Lens: React.FC = () => {
             ref={webcamRef}
             screenshotFormat="image/jpeg"
             className="absolute left-0 top-0 h-screen w-screen border-primary"
-            videoConstraints={{ facingMode: "user" }}
+            videoConstraints={{ facingMode }}
           />
-          <div className="absolute bottom-0 left-0 right-0 flex justify-center p-4">
-            <Button onClick={handleTakePhoto}>Capture</Button>
+          <div className="absolute bottom-0  flex justify-between space-x-2 p-4 w-1/2 ">
+            <Button onClick={handleTakePhoto}><Camera></Camera></Button>
+            <Button onClick={toggleFacingMode} className="ml-auto">
+              <RefreshCcwIcon />
+            </Button>
           </div>
         </div>
       )}
 
       {image && !loading && !showResults && (
-        <div className="md:mt-8 flex flex-col items-center md:h-[80dvh] h-[30dvh] md:mb-4  max-w-6xl my-10">
-          <div className="md:h-[80dvh] h-[20dvh] mb-4  md:max-w-6xl max-w-xs w-screen relative">
-
-          <Image
-            src={image}
-            alt="Captured preview"
-            className=" border-2 border-primary "
-            fill
-          />
+        <div className="my-10 flex h-[30dvh] max-w-6xl flex-col items-center md:mb-4 md:mt-8 md:h-[80dvh]">
+          <div className="relative mb-4 h-[20dvh] w-screen max-w-xs md:h-[80dvh] md:max-w-6xl">
+            <Image
+              src={image}
+              alt="Captured preview"
+              className="border-2 border-primary"
+              fill
+            />
           </div>
           <div className="flex gap-4">
             <Button onClick={handleRetakePhoto}>Retake Photo</Button>
@@ -188,21 +199,20 @@ const Lens: React.FC = () => {
       )}
 
       {showResults && (
-        <div className="relative flex h-full w-full flex-col md:flex-row m-10">
+        <div className="relative m-10 flex h-full w-full flex-col md:flex-row">
           <motion.div
             className="flex flex-col items-center justify-center bg-transparent md:w-1/2"
             initial={{ x: "0%", opacity: "0%" }}
             animate={{ x: "0%", opacity: "100%" }}
             transition={{ duration: 0.5 }}
           >
-            <div className="md:h-[80dvh] h-[20dvh] mb-4  md:max-w-4xl max-w-xs w-screen relative"> 
-
-            <Image
-              src={image!}
-              alt="Captured preview"
-              className="border-2"
-              fill
-            />
+            <div className="relative mb-4 h-[20dvh] w-screen max-w-xs md:h-[80dvh] md:max-w-4xl">
+              <Image
+                src={image!}
+                alt="Captured preview"
+                className="border-2"
+                fill
+              />
             </div>
           </motion.div>
 
@@ -212,9 +222,31 @@ const Lens: React.FC = () => {
             animate={{ x: "0%" }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="mb-4 w-full rounded-lg border-2 bg-primary p-2 text-center text-2xl font-semibold text-primary-foreground">
+            <div className="mb-4 w-full rounded-lg border-2 bg-primary p-2 text-center text-2xl font-semibold text-primary-foreground flex justify-between px-5 items-center">
+              
+            <Button variant={"secondary"}  className="space-x-2 opacity-0 hover:cursor-default hidden md:block">
+                
+                <RefreshCcwDot/>
+                <p>
+
+                Reset
+                </p>
+              </Button>
+              <h2>
               Results
-            </h2>
+              </h2>
+              <a href={"/lens"} >
+              <Button variant={"secondary"} className="space-x-2">
+                
+                <RefreshCcwDot/>
+                <p className="hidden md:block">
+
+                Reset
+                </p>
+              </Button>
+              </a>
+             
+            </div>
 
             <Tabs
               defaultValue="account"
@@ -242,7 +274,7 @@ const Lens: React.FC = () => {
                   <>
                     <p className="text-4xl text-primary">Identified Objects:</p>
                     <ul className="my-10 list-decimal pl-4">
-                      {results[0]?.Objects.map((item, index) => (
+                      {results[0]?.Objects?.map((item, index) => (
                         <li key={index}>{item.Obj}</li>
                       ))}
                     </ul>
@@ -250,13 +282,24 @@ const Lens: React.FC = () => {
                 )}
               </TabsContent>
               <TabsContent value="password">
-                {!loading && activeTab === "objects" && (
+                {!loading && activeTab === "links" && (
                   <>
-                    <p className="text-4xl text-primary">Identified Objects:</p>
-                    <ul className="my-10 list-decimal pl-4">
-                      {results[0]?.Objects.map((item, index) => (
-                        <li key={index}>{item.Obj}</li>
-                      ))}
+                    <p className="text-4xl text-primary">Results:</p>
+                    <ul className="my-10 list-disc text-blue-500 pl-4">
+                      {results
+                        .filter((result) => result.SearchResults)
+                        .flatMap((result) => result.SearchResults!)
+                        .map((item, index) => (
+                          <li key={index}>
+                            <Link
+                              href={item.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {item.link}
+                            </Link>
+                          </li>
+                        ))}
                     </ul>
                   </>
                 )}
