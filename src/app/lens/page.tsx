@@ -7,6 +7,7 @@ import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import Link from "next/link";
 import Image from "next/image";
+import { AspectRatio } from "~/components/ui/aspect-ratio";
 
 interface ObjectResult {
   Obj: string;
@@ -112,7 +113,7 @@ const Lens: React.FC = () => {
   };
 
   return (
-    <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-x-hidden px-10 dark:bg-background md:px-0">
+    <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden px-10 dark:bg-background md:px-0">
       {!cameraVisible && !image && (
         <>
           <div className="mt-40 text-center md:mb-8 md:mt-0">
@@ -169,7 +170,7 @@ const Lens: React.FC = () => {
             audio={false}
             ref={webcamRef}
             screenshotFormat="image/jpeg"
-            className="absolute left-0 top-0 h-screen w-screen border-primary"
+            className="absolute left-0 top-0 min-h-screen w-screen border-primary"
             videoConstraints={{ facingMode }}
           />
           <div className="absolute bottom-0  flex justify-between space-x-2 p-4 w-1/2 ">
@@ -182,38 +183,79 @@ const Lens: React.FC = () => {
       )}
 
       {image && !loading && !showResults && (
-        <div className="my-10 flex h-[30dvh] max-w-6xl flex-col items-center md:mb-4 md:mt-8 md:h-[80dvh]">
-          <div className="relative mb-4 h-[20dvh] w-screen max-w-xs md:h-[80dvh] md:max-w-6xl">
+        <>
+        <div className="hidden my-10 md:flex h-[30dvh] md:w-1/2 flex-col items-center md:mb-4 md:mt-8 md:h-[80dvh]">
+          {/* <div className="relative mb-4 h-[20dvh] w-screen max-w-xs md:h-[80dvh] md:max-w-6xl">
+          </div> */}
+          <AspectRatio ratio={16/9} className="w-full">
+            <Image
+              src={image}
+              alt="Captured preview"
+              className="border-2 border-primary"
+              fill
+              />
+          </AspectRatio>
+          <div className="flex gap-4 my-2">
+            <Button onClick={handleRetakePhoto}>Retake Photo</Button>
+            <Button onClick={handleViewResults}>View Results</Button>
+          </div>
+        </div>
+        <div className="my-10 flex md:hidden h-[30dvh] md:w-1/2 flex-col items-center md:mb-4 md:mt-8 md:h-[80dvh]">
+          {/* <div className="relative mb-4 h-[20dvh] w-screen max-w-xs md:h-[80dvh] md:max-w-6xl">
+          </div> */}
+          <AspectRatio ratio={10/16} className="w-full">
             <Image
               src={image}
               alt="Captured preview"
               className="border-2 border-primary"
               fill
             />
-          </div>
-          <div className="flex gap-4">
+          </AspectRatio>
+          <div className="flex gap-4 my-2">
             <Button onClick={handleRetakePhoto}>Retake Photo</Button>
             <Button onClick={handleViewResults}>View Results</Button>
           </div>
         </div>
+              </>
       )}
 
       {showResults && (
         <div className="relative m-10 flex h-full w-full flex-col md:flex-row">
           <motion.div
-            className="flex flex-col items-center justify-center bg-transparent md:w-1/2"
+            className="md:flex hidden flex-col items-center justify-center bg-transparent md:w-1/2"
             initial={{ x: "0%", opacity: "0%" }}
             animate={{ x: "0%", opacity: "100%" }}
             transition={{ duration: 0.5 }}
           >
-            <div className="relative mb-4 h-[20dvh] w-screen max-w-xs md:h-[80dvh] md:max-w-4xl">
+            {/* <div className="relative mb-4 h-[20dvh] w-screen max-w-xs md:h-[80dvh] md:max-w-4xl">
+            </div> */}
+            <AspectRatio ratio={16/10}>
+
               <Image
                 src={image!}
                 alt="Captured preview"
                 className="border-2"
                 fill
-              />
-            </div>
+                />
+                </AspectRatio>
+          </motion.div>
+          <motion.div
+            className="flex md:hidden flex-col items-center justify-center bg-transparent md:w-1/2"
+            initial={{ x: "0%", opacity: "0%" }}
+            animate={{ x: "0%", opacity: "100%" }}
+            transition={{ duration: 0.5 }}
+          >
+            {/* <div className="relative mb-4 h-[20dvh] w-screen max-w-xs md:h-[80dvh] md:max-w-4xl">
+            </div> */}
+            <AspectRatio ratio={10/16}>
+
+              <Image
+                src={image!}
+                alt="Captured preview"
+                className="border-2"
+                fill
+                />
+                </AspectRatio>
           </motion.div>
 
           <motion.div
