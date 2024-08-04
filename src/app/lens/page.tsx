@@ -164,23 +164,25 @@ const Lens: React.FC = () => {
         </>
       )}
 
-      {cameraVisible && (
-        <div className="relative flex h-full w-full flex-col items-center">
-          <Webcam
-            audio={false}
-            ref={webcamRef}
-            screenshotFormat="image/jpeg"
-            className="absolute left-0 top-0 min-h-screen w-screen border-primary"
-            videoConstraints={{ facingMode }}
-          />
-          <div className="absolute bottom-0  flex justify-between space-x-2 p-4 w-1/2 ">
-            <Button onClick={handleTakePhoto}><Camera></Camera></Button>
-            <Button onClick={toggleFacingMode} className="ml-auto">
-              <RefreshCcwIcon />
-            </Button>
-          </div>
-        </div>
-      )}
+{cameraVisible && (
+  <div className="absolute inset-0 flex flex-col items-center justify-center">
+    <Webcam
+      audio={false}
+      ref={webcamRef}
+      screenshotFormat="image/jpeg"
+      className="absolute inset-0 h-full w-full object-cover"
+      videoConstraints={{ facingMode }}
+    />
+    <div className="absolute bottom-0 flex w-1/2 justify-between p-4">
+      <Button onClick={handleTakePhoto}>
+        <Camera />
+      </Button>
+      <Button onClick={toggleFacingMode}>
+        <RefreshCcwIcon />
+      </Button>
+    </div>
+  </div>
+)}
 
       {image && !loading && !showResults && (
         <>
